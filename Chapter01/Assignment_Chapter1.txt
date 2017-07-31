@@ -1,0 +1,604 @@
+The first program we will review is quite short, although it has some subtle
+aspects, including a list of lists. Here is what it does: Given a number on the
+command line, the program outputs the same number onto the console using
+“big” digits.
+At sites where lots of users share a high-speed line printer, it used to be
+common practice for each user’s print job to be preceded by a cover page that
+showed their username and some other identifying details printed using this
+kind of technique.
+We will review the code in three parts: the import, the creation of the lists
+holding the data the program uses, and the processing itself. But first, let’s
+look at a sample run:
+bigdigits.py 41072819
+ * * *** ***** *** *** * ****
+ ** ** * * * * * * * ** * *
+ * * * * * * * * * * * * *
+* * * * * * * *** * ****
+****** * * * * * * * * *
+ * * * * * * * * * *
+ * *** *** * ***** *** *** *
+We have not shown the console prompt (or the leading ./ for Unix users); we
+will take them for granted from now on.
+import sys
+Since we must read in an argument from the command line (the number
+to output), we need to access the sys.argv list, so we begin by importing the
+sys module.
+We represent each number as a list of strings. For example, here is zero:
+From the Library of STEPHEN EISEMAN
+ptg
+40 Chapter 1. Rapid Introduction to Procedural Programming
+Zero = [" *** ",
+" * * ",
+"* *",
+"* *",
+"* *",
+" * * ",
+" *** "]
+One detail to note is that the Zero list of strings is spread over multiple lines.
+Python statements normally occupy a single line, but they set type
+can span multiple
+lines if they are a parenthesized expression, a list, set, or dictionary literal, a
+function call argument list, or a multiline statement where every end-of-line
+character except the last is escaped by preceding it with a backslash (\). In
+all these cases any number of lines can be spanned and indentation does not
+matter for the second and subsequent lines.
+Each list representing a number has seven strings, all of uniform width,
+although what this width is differs from number to number. The lists for the
+other numbers follow the same pattern as for zero, although they are laid out
+for compactness rather than for clarity:
+One = [" * ", "** ", " * ", " * ", " * ", " * ", "***"]
+Two = [" *** ", "* *", "* * ", " * ", " * ", "* ", "*****"]
+# ...
+Nine = [" ****", "* *", "* *", " ****", " *", " *", " *"]
+The last piece of data we need is a list of all the lists of digits:
+Digits = [Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine]
+We could have created the Digits lists directly, and avoided creating the extra
+variables. For example:
+Digits = [
+[" *** ", " * * ", "* *", "* *", "* *",
+" * * ", " *** "], # Zero
+[" * ", "** ", " * ", " * ", " * ", " * ", "***"], # One
+# ...
+[" ****", "* *", "* *", " ****", " *", " *",
+ " *"] # Nine
+]
+We preferred to use a separate variable for each number both for ease of
+understanding and because it looks neater using the variables.
+We will quote the rest of the code in one go so that you can try to figure out how
+it works before reading the explanation that follows.
+F
+
+import sys
+
+Zero = [" *** ",
+        "*   *",
+        "*   *",
+        "*   *",
+        "*   *",
+        "*   *",
+        " *** "]
+One = [" * ",
+       "** ",
+       " * ",
+       " * ",
+       " * ",
+       " * ",
+       "***"]
+Two = [" *** ",
+       "*   *",
+       "*  * ",
+       "  *  ",
+       " *   ",
+       "*    ",
+       "*****"]
+Three = [" *** ",
+         "*   *",
+         "    *",
+         "  ** ",
+         "    *",
+         "*   *",
+         " *** "]
+Four = ["    * ",
+        "   ** ",
+        "  * * ",
+        " *  * ",
+        "******",
+        "    * ",
+        "    * "]
+Five = ["*****",
+        "*    ",
+        "*    ",
+        " *** ",
+        "    *",
+        "*   *",
+        " *** "]
+Six = [" *** ",
+       "*   *",
+       "*    ",
+       "**** ",
+       "*   *",
+       "*   *",
+       " *** "]
+Seven = ["*****",
+         "    *",
+         "   * ",
+         "  *  ",
+         " *   ",
+         "*    ",
+         "*    "]
+Eight = [" *** ",
+         "*   *",
+         "*   *",
+         " *** ",
+         "*   *",
+         "*   *",
+         " *** "]
+Nine = [" ****",
+        "*   *",
+        "*   *",
+        " ****",
+        "    *",
+        "    *",
+        " *** "]
+
+Digits = [Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine]
+
+try:
+    digits = sys.argv[1]
+    row = 0
+    while row < 7:
+        line = ""
+        column = 0
+        while column < len(digits):
+            number = int(digits[column])
+            digit = Digits[number]
+            line += digit[row].replace('*', digits[column]) + " "
+            column += 1
+        print(line)
+        row += 1
+except IndexError:
+    print("Usage:bigdigits.py <numbers>")
+except ValueError as err:
+    print(err, "in", digits)
+
+------------------------------------------------------------------------------------------------------------------------------
+2. IDLE can be used as a very powerful and flexible calculator, but sometimes
+it is useful to have a task-specific calculator. Create a program that
+prompts the user to enter a number in a while loop, gradually building
+up a list of the numbers entered. When the user has finished (by simply
+pressing Enter), print out the numbers they entered, the count of numbers,
+the sum of the numbers, the lowest and highest numbers entered, and the
+mean of the numbers (sum / count). Here is a sample run:
+average1_ans.py
+enter a number or Enter to finish: 5
+enter a number or Enter to finish: 4
+enter a number or Enter to finish: 1
+enter a number or Enter to finish: 8
+enter a number or Enter to finish: 5
+enter a number or Enter to finish: 2
+enter a number or Enter to finish:
+From the Library of STEPHEN EISEMAN
+ptg
+48 Chapter 1. Rapid Introduction to Procedural Programming
+numbers: [5, 4, 1, 8, 5, 2]
+count = 6 sum = 25 lowest = 1 highest = 8 mean = 4.16666666667
+It will take about four lines to initialize the necessary variables (an empty
+list is simply []), and less than 15 lines for the while loop, including basic
+error handling. Printing out at the end can be done in just a few lines, so
+the whole program, including blank lines for the sake of clarity, should be
+about 25 lines.
+
+
+
+numbers =[]
+lowest = None
+highest = None
+Sum = 0
+
+while True:
+        number = input("Enter Number or Enter to finish: ")
+        if number:
+            try:
+
+             numbers.append(number)
+             number = int(number)
+             if lowest is None or number < lowest:
+                lowest = number
+             if  highest is None or number > highest:
+                highest = number
+             Sum += number
+            except ValueError as err:
+             print(err)
+        else:
+             break
+print("number",numbers)
+print("count=",len(numbers),"Sum= ",Sum, "lowest= ",lowest,"highest =",highest,"mean = ",Sum/len(numbers))
+
+
+output:
+Enter Number or Enter to finish: 12
+Enter Number or Enter to finish: 15
+Enter Number or Enter to finish: 85
+Enter Number or Enter to finish: 96
+Enter Number or Enter to finish: 63
+Enter Number or Enter to finish: 
+number ['12', '15', '85', '96', '63']
+count= 5 Sum=  271 lowest=  12 highest = 96 mean =  54.2
+
+------------------------------------------------------------------------------------------------------------------------------
+One frequently occurring need is the generation of test data. There is no single
+generic program for doing this, since test data varies enormously. Python is
+often used to produce test data because it is so easy to write and modify Python
+programs. In this subsection we will create a program that generates a grid
+of random integers; the user can specify how many rows and columns they
+want and over what range the integers should span. We’ll start by looking at
+a sample run:
+generate_grid.py
+rows: 4x
+invalid literal for int() with base 10: '4x'
+rows: 4
+columns: 7
+minimum (or Enter for 0): -100
+maximum (or Enter for 1000):
+ 554 720 550 217 810 649 912
+ -24 908 742 -65 -74 724 825
+ 711 968 824 505 741 55 723
+ 180 -60 794 173 487 4 -35
+The program works interactively, and at the beginning we made a typing error
+when entering the number of rows. The program responded by printing an
+error message and then asking us to enter the number of rows again. For the
+maximum we just pressed Enter to accept the default.
+We will review the code in four parts: the import, the definition of a get_int()
+function (a more sophisticated version than the one shown in Piece #8), the
+user interaction to get the values to use, and the processing itself.
+import random
+random. We need the random module to give us access to the random.randint()
+randint()
+
+function.
+From the Library of STEPHEN EISEMAN
+ptg
+Examples 43
+def get_int(msg, minimum, default):
+while True:
+try:
+line = input(msg)
+if not line and default is not None:
+return default
+i = int(line)
+if i < minimum:
+print("must be >=", minimum)
+else:
+return i
+except ValueError as err:
+print(err)
+This function requires three arguments: a message string, a minimum value,
+and a default value. If the user just presses Enter there are two possibilities. If
+default is None, that is, no default value has been given, the flow of control will
+drop through to the int() line. There the conversion will fail (since '' cannot
+be converted to an integer), and a ValueError exception will be raised. But if
+default is not None, then it is returned. Otherwise, the function will attempt
+to convert the text the user entered into an integer, and if the conversion is
+successful, it will then check that the integer is at least equal to the minimum
+that has been specified.
+So, the function will always return either default (if the user just pressed
+Enter), or a valid integer that is greater than or equal to the specified minimum.
+rows = get_int("rows: ", 1, None)
+columns = get_int("columns: ", 1, None)
+minimum = get_int("minimum (or Enter for 0): ", -1000000, 0)
+default = 1000
+if default < minimum:
+default = 2 * minimum
+maximum = get_int("maximum (or Enter for " + str(default) + "): ",
+minimum, default)
+Our get_int() function makes it easy to obtain the number of rows and
+columns and the minimum random value that the user wants. For rows and
+columns we give a default value of None, meaning no default, so the user must
+enter an integer. In the case of the minimum, we supply a default value of 0,
+and for the maximum we give a default value of 1 000, or twice the minimum
+if the minimum is greater than or equal to 1 000.
+As we noted in the previous example, function call argument lists can span
+any number of lines, and indentation is irrelevant for their second and subsequent
+lines.
+From the Library of STEPHEN EISEMAN
+ptg
+44 Chapter 1. Rapid Introduction to Procedural Programming
+Once we know how many rows and columns the user requires and the minimum
+and maximum values of the random numbers they want, we are ready to
+do the processing.
+row = 0
+while row < rows:
+line = ""
+column = 0
+while column < columns:
+i = random.randint(minimum, maximum)
+s = str(i)
+while len(s) < 10:
+s=""+s
+line += s
+column += 1
+print(line)
+row += 1
+To generate the grid we use three while loops, the outer one working by rows,
+the middle one by columns, and the inner one by characters. In the middle
+loop we obtain a random number in the specified range and then convert it to
+a string. The inner while loop is used to pad the string with leading spaces so
+that each number is represented by a string 10 characters wide. We use the
+line string to accumulate the numbers for each row, and print the line after
+each column’s numbers have been added. This completes our second example.
+Python provides very sophisticated string formatting functionality, as str.
+format()
+well
+as excellent support for for … in loops, so more realistic versions of both
+bigdigits.py and generate_grid.py would have used for … in loops, and generate_grid.py
+would have used Python’s string formatting capabilities rather
+than crudely padding with spaces. But we have limited ourselves to the eight
+pieces of Python introduced in this chapter, and they are quite sufficient for
+writing complete and useful programs. In each subsequent chapter we will
+learn new Python features, so as we progress through the book the programs
+we will see and be capable of writing will grow in sophistication.
+
+
+
+import random
+def get_int(msg, minimum, default):
+    while True:
+            try:
+                line = input(msg)
+                if not line and default is not None:
+                    return default
+                i = int(line)
+                if i < minimum:
+                 print("must be >=", minimum)
+                else:
+                    return i
+            except ValueError as err:
+                print(err)
+
+rows = get_int("rows: ", 1, None)
+columns = get_int("columns: ", 1, None)
+minimum = get_int("minimum (or Enter for 0): ", -1000000, 0)
+default = 1000
+if default < minimum:
+    default = 2 * minimum
+maximum = get_int("maximum (or Enter for " + str(default) + "): ",minimum, default)
+
+row = 0
+while row < rows:
+    line = ""
+    column = 0
+    while column < columns:
+        i = random.randint(minimum, maximum)
+        s = str(i)
+        while len(s) < 10:
+            s = " " + s
+        line += s
+        column += 1
+    print(line)
+    row += 1
+------------------------------------------------------------------------------------------------------------------------------
+The purpose of the exercises here, and throughout the book, is to examples
+encourage you
+to experiment with Python, and to get hands-on experience to help you absorb
+each chapter’s material. The examples and exercises cover both numeric and
+text processing to appeal to as wide an audience as possible, and they are kept
+fairly small so that the emphasis is on thinking and learning rather than just
+typing code. Every exercise has a solution provided with the book’s examples.
+1. One nice variation of the bigdigits.py program is where instead of
+printing *s, the relevant digit is printed instead. For example:
+bigdigits_ans.py 719428306
+77777 1 9999 4 222 888 333 000 666
+ 7 11 9 9 44 2 2 8 8 3 3 0 0 6
+ 7 1 9 9 4 4 2 2 8 8 3 0 0 6
+ 7 1 9999 4 4 2 888 33 0 0 6666
+ 7 1 9  444444 2 8 8 3 0 0 6 6
+7 1 9 4 2 8 8 3 3 0 0 6 6
+7 111 9 4 22222 888 333 000 666
+Two approaches can be taken. The easiest is to simply change the *s in
+the lists. But this isn’t very versatile and is not the approach you should
+take. Instead, change the processing code so that rather than adding each
+digit’s row string to the line in one go, you add character by character, and
+whenever a * is encountered you use the relevant digit.
+This can be done by copying bigdigits.py and changing about five lines.
+It isn’t hard, but it is slightly subtle. A solution is provided as bigdigits_ans.py
+
+
+import sys
+
+
+Zero = ["  ***  ", " *   * ", "*     *", "*     *", "*     *",
+        " *   * ", "  ***  "]
+One = [" * ", "** ", " * ", " * ", " * ", " * ", "***"]
+Two = [" *** ", "*   *", "*  * ", "  *  ", " *   ", "*    ", "*****"]
+Three = [" *** ", "*   *", "    *", "  ** ", "    *", "*   *", " *** "]
+Four = ["   *  ", "  **  ", " * *  ", "*  *  ", "******", "   *  ",
+        "   *  "]
+Five = ["*****", "*    ", "*    ", " *** ", "    *", "*   *", " *** "]
+Six = [" *** ", "*    ", "*    ", "**** ", "*   *", "*   *", " *** "]
+Seven = ["*****", "    *", "   * ", "  *  ", " *   ", "*    ", "*    "]
+Eight = [" *** ", "*   *", "*   *", " *** ", "*   *", "*   *", " *** "]
+Nine = [" ****", "*   *", "*   *", " ****", "    *", "    *", "    *"]
+
+Digits = [Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine]
+
+try:
+    digits = sys.argv[1]
+    row = 0
+    while row < 7:
+        line = ""
+        column = 0
+        while column < len(digits):
+            number = int(digits[column])
+            digit = Digits[number]
+            for c in digit[row]:
+                if c == "*":
+                    c = str(number)
+                line += c
+            line += "  "
+            column += 1
+        print(line)
+        row += 1
+except IndexError:
+    print("usage: bigdigits.py <number>")
+except ValueError as err:
+    print(err, "in", digits)
+
+------------------------------------------------------------------------------------------------------------------------------
+
+In some situations we need to generate test text—for example, to populate
+a web site design before the real content is available, or to provide test
+content when developing a report writer. To this end, write a program that
+generates awful poems (the kind that would make a Vogon blush).
+Create some lists of words, for example, articles (“the”, “a”, etc.), subjects
+random. (“cat”, “dog”, “man”, “woman”),
+
+verbs (“sang”, “ran”, “jumped”), and adverbs
+(“loudly”, “quietly”, “well”, “badly”). Then loop five times, and on each iteration
+use the random.choice() function to pick an article, subject, verb,
+and adverb. Use random.randint() to choose between two sentence structures:
+article, subject, verb, and adverb, or just article, subject, and verb,
+and print the sentence. Here is an example run:
+awfulpoetry1_ans.py
+another boy laughed badly
+the woman jumped
+a boy hoped
+a horse jumped
+another man laughed rudely
+You will need to import the random module. The lists can be done in about
+4–10 lines depending on how many words you put in them, and the loop
+itself requires less than ten lines, so with some blank lines the whole
+program can be done in about 20 lines of code. A solution is provided as
+awfulpoetry1_ans.py
+import random
+
+
+articles = ["the", "a", "another", "her", "his"]
+subjects = ["cat", "dog", "horse", "man", "woman", "boy", "girl"]
+verbs = ["sang", "ran", "jumped", "said", "fought", "swam", "saw",
+         "heard", "felt", "slept", "hopped", "hoped", "cried",
+         "laughed", "walked"]
+adverbs = ["loudly", "quietly", "quickly", "slowly", "well", "badly",
+           "rudely", "politely"]
+sentence=[[articles,subjects,verbs,adverbs],[articles,subjects,verbs]]
+
+
+for _ in [1,2,3,4,5]:
+	sentense_type = sentence[random.randint(0,1)]
+	line = ""
+	column = 0
+	while column < len(sentense_type):
+		line += random.choice(sentense_type[column])
+		line += " "
+		column += 1
+	print(line)
+
+------------------------------------------------------------------------------------------------------------------------------
+To make the awful poetry program more versatile, add some code to it so
+that if the user enters a number on the command line (between 1 and 10
+inclusive), the program will output that many lines. If no command-line
+argument is given, default to printing five lines as before. You’ll need to
+change the main loop (e.g., to a while loop). Keep in mind that Python’s
+comparison operators can be chained, so there’s no need to use logical and
+when checking that the argument is in range. The additional functionality
+can be done by adding about ten lines of code. A solution is provided as
+
+
+import sys
+import random
+
+
+articles = ["the", "a", "another", "her", "his"]
+subjects = ["cat", "dog", "horse", "man", "woman", "boy", "girl"]
+verbs = ["sang", "ran", "jumped", "said", "fought", "swam", "saw",
+         "heard", "felt", "slept", "hopped", "hoped", "cried",
+         "laughed", "walked"]
+adverbs = ["loudly", "quietly", "quickly", "slowly", "well", "badly",
+           "rudely", "politely"]
+sentence=[[articles,subjects,verbs,adverbs],[articles,subjects,verbs]]
+
+
+lines = 5
+if len(sys.argv) > 1:
+	try:
+		if 1 <= int(sys.argv[1]) <= 10:
+			lines = int(sys.argv[1])
+	except ValueError as err:
+		print(err)
+
+
+while lines:
+	sentense_type = sentence[random.randint(0,1)]
+	line = ""
+	column = 0
+	while column < len(sentense_type):
+		line += random.choice(sentense_type[column])
+		line += " "
+		column += 1
+	print(line)
+	lines -= 1
+
+
+------------------------------------------------------------------------------------------------------------------------------ 
+It would be nice to be able to calculate the median (middle value) as well
+as the mean for the averages program in Exercise 2, but to do this we must
+sort the list. In Python a list can easily be sorted using the list.sort()
+From the Library of STEPHEN EISEMAN
+ptg
+
+method, but we haven’t covered that yet, so we won’t use it here. Extend
+the averages program with a block of code that sorts the list of
+numbers—efficiency is of no concern, just use the easiest approach you
+can think of. Once the list is sorted, the median is the middle value if the
+list has an odd number of items, or the average of the two middle values
+if the list has an even number of items. Calculate the median and output
+that along with the other information.
+This is rather tricky, especially for inexperienced programmers. If you
+have some Python experience, you might still find it challenging, at least if
+you keep to the constraint of using only the Python we have covered so far.
+The sorting can be done in about a dozen lines and the median calculation
+(where you can’t use the modulus operator, since it hasn’t been covered yet)
+in four lines.
+
+numbers = []
+indexes = []
+total = 0
+lowest = None
+highest = None
+
+while True:
+    try:
+        line = input("enter a number or Enter to finish: ")
+        if not line:
+            break
+        indexes.append(len(numbers))
+        number = int(line)
+        numbers.append(number)
+        total += number
+        if lowest is None or lowest > number:
+            lowest = number
+        if highest is None or highest < number:
+            highest = number
+    except ValueError as err:
+        print(err)
+
+swapped = True
+while swapped:
+    swapped = False
+    for index in indexes:
+        if index + 1 == len(numbers):
+            break
+        if numbers[index] > numbers[index + 1]:
+            temp = numbers[index]
+            numbers[index] = numbers[index + 1]
+            numbers[index + 1] = temp
+            swapped = True
+
+index = int(len(numbers) / 2)
+median = numbers[index]
+if index and index * 2 == len(numbers):
+    median = (median + numbers[index - 1]) / 2
+
+print("numbers:", numbers)
+print("count =", len(numbers), "total =", total,
+      "lowest =", lowest, "highest =", highest,
+      "mean =", total / len(numbers), "median =", median)
